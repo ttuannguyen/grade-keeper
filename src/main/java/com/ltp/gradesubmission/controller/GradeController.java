@@ -1,4 +1,4 @@
-package com.ltp.gradesubmission;
+package com.ltp.gradesubmission.controller;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -10,6 +10,11 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import com.ltp.gradesubmission.Constants;
+import com.ltp.gradesubmission.Grade;
+import com.ltp.gradesubmission.repository.GradeRepository;
+
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -17,8 +22,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 public class GradeController {
 
-    List<Grade> studentGrades = new ArrayList<>();
 
+    GradeRepository gradeRepository = new GradeRepository();
+    
     @GetMapping("/")
     public String getForm(Model model, @RequestParam(required = false) String id) {
         // @RequestParam (required) = false making the name param optional as it is only needed for updates
@@ -38,14 +44,14 @@ public class GradeController {
 
         // Method 2: Refactored
         int index = getGradeIndex(id);
-        model.addAttribute("grade", index == Constants.NOT_FOUND ? new Grade() : studentGrades.get(index));
+        model.addAttribute("grade", index == Constants.NOT_FOUND ? new Grade() : gradeRepository.getGrade(index));
 
         return "form";
     }
 
     @GetMapping("/grades")
     public String getGrades(Model model) {
-        model.addAttribute("grades", studentGrades);
+        model.addAttribute("grades", gradeRepository.getGrades());
         return "grades";
     }
 
@@ -63,10 +69,10 @@ public class GradeController {
 
         int index = getGradeIndex(grade.getId());
         if (index == Constants.NOT_FOUND) {
-            studentGrades.add(grade);    
+            gradeRepository.addGrade(grade);
         } else {
             // if the grade already exists, we want to update it
-            studentGrades.set(index, grade);
+            gradeRepository.updateGrade(grade, index);
 
         }
 
@@ -75,8 +81,8 @@ public class GradeController {
     }
 
     public int getGradeIndex(String id) {
-        for (int i = 0; i < studentGrades.size(); i++) {
-            if (studentGrades.get(i).getId().equals(id)) return i;
+        for (int i = 0; i < gradeRepository.getGrades().size(); i++) {
+            if (gradeRepository.getGrades().get(i).getId().equals(id)) return i;
         }
         return Constants.NOT_FOUND; // anything, representing index not found 
     }
