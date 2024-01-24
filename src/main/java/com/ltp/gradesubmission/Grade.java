@@ -1,16 +1,18 @@
 package com.ltp.gradesubmission;
-
 import java.util.UUID;
+import javax.validation.constraints.NotBlank;
 
 public class Grade {
+    @NotBlank(message = "Name cannot be blank")
+    // We're overriding the error message with our own as shown above
     private String name;
+    @NotBlank(message = "Subject cannot be blank")
     private String subject;
     private String score;
     private String id;
 
     // Empty constructor
     public Grade() {
-        // Added this new id
         this.id = UUID.randomUUID().toString();
     }
     // When updating, we're going to get 2 different IDs. So we need to add another input to the form, binding the grade's id field.
@@ -60,5 +62,4 @@ public class Grade {
     //         ", score='" + getScore() + "'" +
     //         "}";
     // }
-
 }

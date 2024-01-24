@@ -3,8 +3,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -46,13 +49,17 @@ public class GradeController {
         return "grades";
     }
 
-    @PostMapping("/handleSubmit")
     // This handler method intercepts the POST request
-    public String submitForm(Grade grade) {
+    @PostMapping("/handleSubmit")
+    public String submitForm(@Valid Grade grade, BindingResult result) {
         // Spring boot is going to create a grade object using the empty constructor in Grade class
         // Then, it's going to use the setters to update every single field inside of this grade object with payload from the POST request
         
-        // System.out.println(grade); // For testing purposes after addeding the toString method
+        System.out.println("Has errors: " + result.hasErrors());
+        if (result.hasErrors()) return "form";
+
+        // System.out.println(grade.getSubject()); // For testing purposes after addeding the toString method
+        // System.out.println(grade.getName());
 
         int index = getGradeIndex(grade.getId());
         if (index == Constants.NOT_FOUND) {
