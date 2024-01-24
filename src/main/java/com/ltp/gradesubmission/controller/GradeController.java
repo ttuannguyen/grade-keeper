@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.ltp.gradesubmission.Constants;
 import com.ltp.gradesubmission.Grade;
 import com.ltp.gradesubmission.repository.GradeRepository;
+import com.ltp.gradesubmission.service.GradeService;
 
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -24,34 +25,21 @@ public class GradeController {
 
 
     GradeRepository gradeRepository = new GradeRepository();
+    GradeService gradeService = new GradeService();
     
     @GetMapping("/")
     public String getForm(Model model, @RequestParam(required = false) String id) {
         // @RequestParam (required) = false making the name param optional as it is only needed for updates
         // System.out.println(name);
 
-        // Grade grade;
-        
-        // Method 1:
-        // if (getGradeIndex(name) == -1) {
-        //     // if not found, set the grade var = an empty grade object, which will eventually reset our form
-        //     grade = new Grade();
-        // } else {
-        //     // if found, set the grade object based on the index found
-        //     grade = studentGrades.get(getGradeIndex(name));
-        // }
-        // model.addAttribute("grade", grade);
-
-        // Method 2: Refactored
-        int index = getGradeIndex(id);
-        model.addAttribute("grade", index == Constants.NOT_FOUND ? new Grade() : gradeRepository.getGrade(index));
+        model.addAttribute("grade", gradeService.getGradeById(id));
 
         return "form";
     }
 
     @GetMapping("/grades")
     public String getGrades(Model model) {
-        model.addAttribute("grades", gradeRepository.getGrades());
+        model.addAttribute("grades", gradeService.getGrades());
         return "grades";
     }
 
@@ -67,24 +55,10 @@ public class GradeController {
         // System.out.println(grade.getSubject()); // For testing purposes after addeding the toString method
         // System.out.println(grade.getName());
 
-        int index = getGradeIndex(grade.getId());
-        if (index == Constants.NOT_FOUND) {
-            gradeRepository.addGrade(grade);
-        } else {
-            // if the grade already exists, we want to update it
-            gradeRepository.updateGrade(grade, index);
-
-        }
+        gradeService.submitGrade(grade);
 
         // Redirect to all grades after submission bc submitSubmit doesn't handle rendering of new data
         return "redirect:/grades";
-    }
-
-    public int getGradeIndex(String id) {
-        for (int i = 0; i < gradeRepository.getGrades().size(); i++) {
-            if (gradeRepository.getGrades().get(i).getId().equals(id)) return i;
-        }
-        return Constants.NOT_FOUND; // anything, representing index not found 
     }
     
 }

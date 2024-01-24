@@ -7,6 +7,8 @@ import com.ltp.gradesubmission.Grade;
 
 public class GradeRepository {
     
+    /* CRUD Related Operations */
+    
     private List<Grade> studentGrades = new ArrayList<>();
 
     public Grade getGrade(int index) {
