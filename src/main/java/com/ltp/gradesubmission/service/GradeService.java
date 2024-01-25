@@ -3,13 +3,13 @@ package com.ltp.gradesubmission.service;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import com.ltp.gradesubmission.Constants;
 import com.ltp.gradesubmission.Grade;
 import com.ltp.gradesubmission.repository.GradeRepository;
 
-@Component
+@Service
 public class GradeService {
 
     /* BUSINESS LOGIC */
@@ -55,7 +55,5 @@ public class GradeService {
             // if the grade already exists, we want to update it
             updateGrade(grade, index);
         }
-
     }
-    
 }
